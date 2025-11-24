@@ -1,7 +1,11 @@
+"use client";
 import Link from "next/link";
 import React from "react";
+import { useAuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
+  const { user, LogOutUser } = useAuthContext();
+
   const links = (
     <>
       <Link href="/" className="mr-4">
@@ -12,6 +16,13 @@ export default function Navbar() {
       </Link>
     </>
   );
+
+  const handleLogout = () => {
+    LogOutUser()
+      .then(() => console.log("User logged out"))
+      .catch((err) => console.error(err));
+  };
+
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -24,13 +35,12 @@ export default function Navbar() {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              {" "}
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
                 d="M4 6h16M4 12h8m-8 6h16"
-              />{" "}
+              />
             </svg>
           </div>
           <ul
@@ -42,13 +52,24 @@ export default function Navbar() {
         </div>
         <a className="btn btn-ghost text-xl">Above & Beyond</a>
       </div>
+
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">{links}</ul>
       </div>
-      <div className="navbar-end">
-        <a href="/login" className="btn">
-          Log in
-        </a>
+
+      <div className="navbar-end flex items-center gap-2">
+        {user ? (
+          <>
+            <p className="text-gray-700 mr-2">{user.displayName}</p>
+            <button onClick={handleLogout} className="btn">
+              Log out
+            </button>
+          </>
+        ) : (
+          <Link href="/login" className="btn">
+            Log in
+          </Link>
+        )}
       </div>
     </div>
   );
